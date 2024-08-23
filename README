@@ -50,11 +50,25 @@ Migrations => Controle de versão do nosso banco de dados
 
 Configurar migrations no knex
 
-npx knex migrate:make create-tabela
+npx knex -- migrate:make create-tabela
 
 Dá varios erros, porque ele não entende aonde estão as configurações do nosso banco de dados
     para ele entender as configurações do bd ele pede um arquivo knexfile.ts e importamos as configs do nosso banco de dados para lá
     porém está em typescript e ele não entende ts nativamente então precisamos criar um novo script no package.json
     "knex": "node --loader tsx ./node_modules/.bin/knex"
     
-Agora para executarmos comandos do knex utilizamos npm run knex -- ... => Cria a pasta de migrations na root do projeto
+Agora para executarmos comandos do knex utilizamos para criar a pasta de migrations na root do projeto
+    npm run knex -- ...
+Para executarmos as migrations criadas e configuradas
+    npm run knex -- migrate:latest
+
+A partir que uma migrations foi enviada para produção do seu time ela nunca mais pode ser editada
+Caso exista um erro é preciso criar uma nova migration para corrigir
+Caso tenha sido executada apenas na sua própria maquina podemos sim corrigir 
+    npm run knex -- migrate:rollback
+Depois que dar o rollback você altera o arquivo da migration
+    npm run knex -- migrate:latest
+E pronto você corrigiu na sua própria maquina
+
+Adionar um campo a tabela que criamos
+npm run knex -- migrate:make add-nome_campo-to-nome_tabela

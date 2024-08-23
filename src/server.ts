@@ -1,5 +1,6 @@
 import fastify from "fastify";
 import { knex } from "./database";
+import { randomUUID } from "crypto";
 
 const app = fastify(); //Base da aplicação
 
@@ -11,11 +12,28 @@ const app = fastify(); //Base da aplicação
 // app.patch
 // app.delete
 
-app.get('/hello', async () => {
-    //tabela padrão do sqlite
-    const test = knex('sqlite_schema').select('*')
+app.post('/teste', async () => {
+    const transaction = await knex('tb_transactions').insert({
+        id: randomUUID(),
+        title: "Transação de teste",
+        amount: 1000,
+    }).returning('*')
 
-    return test
+    return transaction;
+})
+
+app.get('/teste', async () => {
+    const transaction = await knex('tb_transactions').select("*")
+
+    return transaction;
+});
+
+app.get('/teste2', async () => {
+    const transaction = await knex('tb_transactions')
+    .where('amount', 1500)
+    .select("*")
+
+    return transaction;
 });
 
 app.listen({
