@@ -1,4 +1,5 @@
 import fastify from "fastify";
+import { knex } from "./database";
 
 const app = fastify(); //Base da aplicação
 
@@ -10,8 +11,11 @@ const app = fastify(); //Base da aplicação
 // app.patch
 // app.delete
 
-app.get('/hello', () => {
-    return "Hello World"
+app.get('/hello', async () => {
+    //tabela padrão do sqlite
+    const test = knex('sqlite_schema').select('*')
+
+    return test
 });
 
 app.listen({

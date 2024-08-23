@@ -31,3 +31,15 @@ Eslint => Processo de padronizar o código mesmo que varias pessoas modifiquem o
 Ele formata o código automaticamente quando salvamos o arquivo
 
 Iremos utilizar o banco de dado Sqlite => Banco SQL relacional
+É possivel utiliza-lo sem instalar nenhum software adicional na nossa maquina facilitando seu uso para aprendizado
+Boa parte das querys são semelhantes aos outros bancos relacionais que utilize SQL
+
+Existem diferentes formas de se comunicar com banco de dados cada uma com diferente proximidade do sql
+Drivers nativos: Bibliotecas de baixo nivel, ou seja escrevemos grande parte da query da forma que desejamos executar no banco de dados (mysql2)
+Query Buildres: Formas de evitar conexão com sql e focar na linguagem que estamos trabalhando (knex)
+ORMs
+
+Iremos utilizar o query builder knex
+npm i kenx --save 
+npm i {bd} 
+npm i knex sqlite3
