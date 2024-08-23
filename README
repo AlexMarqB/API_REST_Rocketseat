@@ -1,0 +1,33 @@
+Estrutura do projeto => 
+
+Microframework que será utilizado: Fastify
+
+Por que ele e não o Express?
+O Fastify é mais bem mantido, atualizações mais recentes e atualizações constantes
+É uma das opções mais utilizadas no Node e é extremamente similar ao Express 
+É mais performatico e está melhor preparado para lidar com as novas versões do javascript/typescript na questão do
+asincronismo e updates de tipagem, funcionalidades e entre outros.
+
+Oque é um Microframework? Ele não define padrão de arquivos, nem de sistema de teste ou bibliotecas, apenas auxilia no controle das rotas.
+
+Comandos para startar o projeto com typescript =>
+
+npm init -y
+npm i -D typescript
+npx tsc --init
+Alterar o "target" do tsconfig.json para "es2020"
+npm i -D @types/node
+
+npx tsc ... => converte o arquivo ts para js para o Node conseguir executar
+
+npm i tsx -D => converte o arquivo ts para js e executa sem criar arquivos fisicos
+Agora podemos executar o arquivo .ts diretamente com o comando 
+npx tsx ... -> Apenas em desenvolvimento, para dar deploy em produção é altamente recomendado converter para js 
+
+Criar um script para executarmos a aplicação mais facilmente no package.json
+"dev": "tsx watch src/server.ts"
+
+Eslint => Processo de padronizar o código mesmo que varias pessoas modifiquem o mesmo código.
+Ele formata o código automaticamente quando salvamos o arquivo
+
+Iremos utilizar o banco de dado Sqlite => Banco SQL relacional
