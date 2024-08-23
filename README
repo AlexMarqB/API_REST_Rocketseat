@@ -43,3 +43,18 @@ Iremos utilizar o query builder knex
 npm i kenx --save 
 npm i {bd} 
 npm i knex sqlite3
+
+Migrations => Controle de versão do nosso banco de dados 
+    São o histórico de todas as mudanças no banco de dados com data e horário das alterações
+    Permite que o banco de dados compartilhado entre mais devs consigam sincronizar o banco de dados evitando conflitos e retrabalhor
+
+Configurar migrations no knex
+
+npx knex migrate:make create-tabela
+
+Dá varios erros, porque ele não entende aonde estão as configurações do nosso banco de dados
+    para ele entender as configurações do bd ele pede um arquivo knexfile.ts e importamos as configs do nosso banco de dados para lá
+    porém está em typescript e ele não entende ts nativamente então precisamos criar um novo script no package.json
+    "knex": "node --loader tsx ./node_modules/.bin/knex"
+    
+Agora para executarmos comandos do knex utilizamos npm run knex -- ... => Cria a pasta de migrations na root do projeto
