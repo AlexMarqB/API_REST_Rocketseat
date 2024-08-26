@@ -29,7 +29,7 @@ export async function transactionsRoutes(app: FastifyInstance) {
     app.get('/summary', async (req, rep) => {
         const summary = await knex("tb_transactions").sum('amount', {as: 'amount'}).first()
 
-        return rep.status(200).send({success: true, message: "Request successfully!"})
+        return rep.status(200).send({success: true, message: "Request successfully!", summary})
     })
 
     app.post('/', async (req, rep) => {
