@@ -1,53 +1,111 @@
 import { FastifyInstance } from "fastify";
-import { z } from 'zod';
+import { z } from "zod";
 import { knex } from "../database";
 import { randomUUID } from "node:crypto";
+import { checkSessionIdExists } from "../middlewares/check-session-id-exists";
 
+// Cookies <-> Formas de manter contexto entre requisições
 
 export async function transactionsRoutes(app: FastifyInstance) {
+    
 
-    app.get('/', async (_, rep) => {
-        const transactions = await knex('tb_transactions').select()
+	app.get(
+		"/",
+		{
+			preHandler: [checkSessionIdExists],
+		},
+		async (req, rep) => {
+			const { sessionId } = req.cookies;
 
-        return rep.status(302).send({success: true, message: "Search was successfully!", transactions})
-    })
+			const transactions = await knex("tb_transactions")
+				.where("session_id", sessionId)
+				.select();
 
-    //:id => Parametro da minha rota para identificar
-    app.get('/:id', async (req, rep) => {
+			return rep.status(302).send({
+				success: true,
+				message: "Search was successfully!",
+				transactions,
+			});
+		}
+	);
 
-        const createTransactionParamsSchema = z.object({
-            id: z.string().uuid()
-        })
+	//:id => Parametro da minha rota para identificar a transaction
+	app.get(
+		"/:id",
+		{
+			preHandler: [checkSessionIdExists],
+		},
+		async (req, rep) => {
+			const createTransactionParamsSchema = z.object({
+				id: z.string().uuid(),
+			});
 
-        const {id} = createTransactionParamsSchema.parse(req.params)
+			const { id } = createTransactionParamsSchema.parse(req.params);
 
-        const transaction = await knex('tb_transactions').where('id', id).first()
+			const { sessionId } = req.cookies;
 
-        return rep.status(302).send({success: true, message: "Transaction found!", transaction})
-    })
+			const transaction = await knex("tb_transactions")
+				.where({ id, session_id: sessionId })
+				.first();
 
-    app.get('/summary', async (req, rep) => {
-        const summary = await knex("tb_transactions").sum('amount', {as: 'amount'}).first()
+			return rep.status(302).send({
+				success: true,
+				message: "Transaction found!",
+				transaction,
+			});
+		}
+	);
 
-        return rep.status(200).send({success: true, message: "Request successfully!", summary})
-    })
+	app.get(
+		"/summary",
+		{
+			preHandler: [checkSessionIdExists],
+		},
+		async (req, rep) => {
+            const { sessionId } = req.cookies;
 
-    app.post('/', async (req, rep) => {
+			const summary = await knex("tb_transactions")
+            .where('session_id', sessionId)
+				.sum("amount", { as: "amount" })
+				.first();
 
-        const createTransactionBodySchema = z.object({
-            title: z.string(),
-            amount: z.number(),
-            type: z.enum(['credit', 'debit'])
-        })
+			return rep
+				.status(200)
+				.send({ success: true, message: "Request successfully!", summary });
+		}
+	);
 
-        const { title, amount, type } = createTransactionBodySchema.parse(req.body);
-        
-        await knex('tb_transactions').insert({
-            id: randomUUID(),
-            title,
-            amount: type === 'credit' ? amount : amount * -1,
-        })
+	app.post("/", async (req, rep) => {
+		const createTransactionBodySchema = z.object({
+			title: z.string(),
+			amount: z.number(),
+			type: z.enum(["credit", "debit"]),
+		});
 
-        return rep.status(201).send({success: true, message: "Created transaction succesfully!"})
-    })
+		const { title, amount, type } = createTransactionBodySchema.parse(
+			req.body
+		);
+
+		let sessionId = req.cookies.sessionId; //buscamos nos cookies do navegador se já existe uma session ID
+
+		if (!sessionId) {
+			sessionId = randomUUID();
+
+			rep.cookie("sessionId", sessionId, {
+				path: "/", //quais rotas do meu app podem acessar esse cookie?,
+				maxAge: 60 * 60 * 24 * 7, //7 days; milisegundos: 1 seg == 1000 ms
+			});
+		}
+
+		await knex("tb_transactions").insert({
+			id: randomUUID(),
+			title,
+			amount: type === "credit" ? amount : amount * -1,
+			session_id: sessionId,
+		});
+
+		return rep
+			.status(201)
+			.send({ success: true, message: "Created transaction succesfully!" });
+	});
 }

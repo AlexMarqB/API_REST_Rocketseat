@@ -72,3 +72,5 @@ E pronto você corrigiu na sua própria maquina
 
 Adionar um campo a tabela que criamos
 npm run knex -- migrate:make add-nome_campo-to-nome_tabela
+
+npm i @fastify/cookie

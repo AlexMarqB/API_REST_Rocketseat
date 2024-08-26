@@ -8,8 +8,8 @@
 # RN
 
 [X] A transação pode ser do tipo crédito que somará ao valor total, ou débito que subtrairá.
-[ ] Deve ser possível indentificarmos o usuário entre as requisições;
-[ ] O usuário só pode visualizar transações o qual ele criou;
+[X] Deve ser possível indentificarmos o usuário entre as requisições;
+[X] O usuário só pode visualizar transações o qual ele criou;
 
 # RNF // Como vamos atingir aqueles requisitos e regras
 
