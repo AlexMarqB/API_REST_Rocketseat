@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { knex } from "../database";
 import { randomUUID } from "node:crypto";
 
+
 export async function transactionsRoutes(app: FastifyInstance) {
 
     app.get('/', async (_, rep) => {
@@ -23,6 +24,12 @@ export async function transactionsRoutes(app: FastifyInstance) {
         const transaction = await knex('tb_transactions').where('id', id).first()
 
         return rep.status(302).send({success: true, message: "Transaction found!", transaction})
+    })
+
+    app.get('/summary', async (req, rep) => {
+        const summary = await knex("tb_transactions").sum('amount', {as: 'amount'}).first()
+
+        return rep.status(200).send({success: true, message: "Request successfully!"})
     })
 
     app.post('/', async (req, rep) => {
