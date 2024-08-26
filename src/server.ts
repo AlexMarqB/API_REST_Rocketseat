@@ -3,6 +3,7 @@ import { knex } from "./database";
 import { randomUUID } from "crypto";
 import { env } from "./env";
 import { testRoutes } from "./routes/testRoutes";
+import { transactionsRoutes } from "./routes/transactions";
 
 const app = fastify(); //Base da aplicação
 
@@ -16,6 +17,10 @@ const app = fastify(); //Base da aplicação
 
 // Importamos as rotas de outro arquivo
 app.register(testRoutes)
+
+app.register(transactionsRoutes, {
+    prefix: 'transactions'
+})
 
 app.listen({
     port: env.PORT
