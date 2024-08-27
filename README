@@ -109,3 +109,9 @@ npx vitest => executa todos os testes
 package.json = 
 "test": "vitest"
 npm test => executa todos os testes
+
+Para rodarmos os testes em uma porta diferente da aplicação principal utilizamos o supertest
+npm i supertest -D
+npm i @types/superset
+
+ela permite que nós façamos chamadas HTTP sem rodar a aplicação
