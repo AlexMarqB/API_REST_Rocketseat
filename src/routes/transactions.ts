@@ -7,7 +7,6 @@ import { checkSessionIdExists } from "../middlewares/check-session-id-exists";
 // Cookies <-> Formas de manter contexto entre requisições
 
 export async function transactionsRoutes(app: FastifyInstance) {
-    
 
 	app.get(
 		"/",
