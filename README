@@ -74,3 +74,38 @@ Adionar um campo a tabela que criamos
 npm run knex -- migrate:make add-nome_campo-to-nome_tabela
 
 npm i @fastify/cookie
+
+Existem 3 tipos de testes => 
+
+Unitários -> Testam exclusivamente 1 unidade da sua aplicação uma pequena parte de forma isolada (função, rota especifica, etc) 
+
+Integração -> Testa a comunicação entre 2 ou mais unidades
+
+EndToEnd (e2e) -> Simula um usuário operando na nossa aplicação da chamada da rota até o banco de dados
+testes EndToEnd são extremamente complexos porém lentos se olharmos pro lado de escalabilidade de uma aplicação
+chega ao ponto que os testes e2e não valem a pena por conta disso utilizamos outros tipos de testes
+
+// Exemplo:
+Teste e2e no front; Quem utiliza o front? O usuário
+front-end -> Abre a página de login, digite o texto alexmarques@gmail.com no campo com ID email
+depois clique no botão X
+Teste e2e no back; Quem utiliza o back? O front
+back-end -> chame a rota HTTP x com o parametro y, websockets
+
+Piramide de Testes: Cada teste tem um dificuldade e exigencias 
+O primeiro teste que devemos aprender são testes E2E porque eles:
+- Não dependem de nenhuma tecnologia
+- Não dependem de arquitetura de software
+- Podem ser feitos independentimente de como a aplicação foi feita
+
+O cenário ideal de teste são, poucos e2e, bastante testes de integração e muito testes unitários
+
+Utilizaremos o vitest porque sua base já é em cima do esbuilder que roda o nosso typescript com o tsx 
+também tem compatibilidade com o Jest que é outro framework de testes porém mais antiga, complexa de ser configurada 
+e utiliza um conversor de ts para js
+
+npm i vitest -D 
+npx vitest => executa todos os testes
+package.json = 
+"test": "vitest"
+npm test => executa todos os testes
