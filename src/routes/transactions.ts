@@ -1,6 +1,6 @@
 import { FastifyInstance } from "fastify";
 import { z } from "zod";
-import { knex } from "../database";
+import { _knex } from "../database";
 import { randomUUID } from "node:crypto";
 import { checkSessionIdExists } from "../middlewares/check-session-id-exists";
 
@@ -16,11 +16,11 @@ export async function transactionsRoutes(app: FastifyInstance) {
 		async (req, rep) => {
 			const { sessionId } = req.cookies;
 
-			const transactions = await knex("tb_transactions")
+			const transactions = await _knex("tb_transactions")
 				.where("session_id", sessionId)
 				.select();
 
-			return rep.status(302).send({
+			return rep.status(200).send({
 				success: true,
 				message: "Search was successfully!",
 				transactions,
@@ -43,11 +43,11 @@ export async function transactionsRoutes(app: FastifyInstance) {
 
 			const { sessionId } = req.cookies;
 
-			const transaction = await knex("tb_transactions")
+			const transaction = await _knex("tb_transactions")
 				.where({ id, session_id: sessionId })
 				.first();
 
-			return rep.status(302).send({
+			return rep.status(200).send({
 				success: true,
 				message: "Transaction found!",
 				transaction,
@@ -63,7 +63,7 @@ export async function transactionsRoutes(app: FastifyInstance) {
 		async (req, rep) => {
             const { sessionId } = req.cookies;
 
-			const summary = await knex("tb_transactions")
+			const summary = await _knex("tb_transactions")
             .where('session_id', sessionId)
 				.sum("amount", { as: "amount" })
 				.first();
@@ -74,6 +74,7 @@ export async function transactionsRoutes(app: FastifyInstance) {
 		}
 	);
 
+	// Criar transação
 	app.post("/", async (req, rep) => {
 		const createTransactionBodySchema = z.object({
 			title: z.string(),
@@ -96,7 +97,7 @@ export async function transactionsRoutes(app: FastifyInstance) {
 			});
 		}
 
-		await knex("tb_transactions").insert({
+		await _knex("tb_transactions").insert({
 			id: randomUUID(),
 			title,
 			amount: type === "credit" ? amount : amount * -1,

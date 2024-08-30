@@ -115,3 +115,7 @@ npm i supertest -D
 npm i @types/superset
 
 ela permite que nós façamos chamadas HTTP sem rodar a aplicação
+
+TODO TESTE deve ser independente de contexto e de outro teste, se um teste depende de outro eles devem ser o mesmo teste
+
+O ideal é executar os testes em um banco de dados especifico de teste que sempre seja zerado após os testes
