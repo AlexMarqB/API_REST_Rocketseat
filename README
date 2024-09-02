@@ -164,3 +164,7 @@ Ele apenas suporta o postgreSQL então iremos converter as configurações do kn
 npm i pg
 
 configurando as variaveis de ambiente e configuração do database.ts
+adicionamos no package.json
+"engines": {
+    "node": ">=18"
+  },
