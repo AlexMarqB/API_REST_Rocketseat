@@ -5,5 +5,5 @@ app.listen({
     port: env.PORT
 }).then(() => {
     console.log("Server up and running")
-    console.log("http://localhost:3333")
+    console.log(env.PORT)
 });
