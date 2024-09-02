@@ -156,3 +156,11 @@ testamos se conseguimos rodar o server:
 node build/server.cjs
 
 adicionamos a pasta build no gitignore
+
+utilizaremos o render.com
+
+Ele apenas suporta o postgreSQL então iremos converter as configurações do knex de sqlite para postgreSQL
+
+npm i pg
+
+configurando as variaveis de ambiente e configuração do database.ts
