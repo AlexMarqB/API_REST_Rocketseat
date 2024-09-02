@@ -22,7 +22,7 @@ describe("Transactions routes", () => {
     beforeEach(async () => {
         //Executa comandos como se fosse no terminal
         execSync('npm run knex migrate:rollback --all') //Defaz todas as migrations
-        execSync('npm run knex migrate:latest')
+        execSync('npm run knex migrate:latest') // Refaz as migrations com um bd totalmente zerado
     })
 
 	test("It should be able to create a transaction", async () => {
@@ -53,26 +53,103 @@ describe("Transactions routes", () => {
 		const cookies = createTransactionResponse.get("Set-Cookie");
 
 		if (!cookies) {
-			expect(cookies).toBeDefined();
+			throw new Error("Cookies where not defined")
 		}
 
-		const response = await request(app.server)
+		const listTransactionsResponse = await request(app.server)
 			.get("/transactions")
-			.set("Cookie", cookies!);
+			.set("Cookie", cookies);
 
-		expect(response.status).toEqual(200);
+		expect(listTransactionsResponse.status).toEqual(200);
 
-		expect(response.body).toEqual({
+		expect(listTransactionsResponse.body).toEqual({
 			success: true,
 			message: "Search was successfully!",
 			transactions: expect.objectContaining([]),
 		});
 
-        expect(response.body.transactions).toEqual([
+        expect(listTransactionsResponse.body.transactions).toEqual([
             expect.objectContaining({
                 title: "New transaction",
                 amount: 5000
             })
         ])
+	});
+
+	test("It should be able to get a specific transaction", async () => {
+		const createTransactionResponse = await request(app.server)
+			.post("/transactions")
+			.send({
+				title: "New transaction",
+				amount: 5000,
+				type: "credit",
+			});
+
+		const cookies = createTransactionResponse.get("Set-Cookie");
+
+		if (!cookies) {
+			throw new Error("Cookies where not defined")
+		}
+
+		const listTransactionsResponse = await request(app.server)
+			.get("/transactions")
+			.set("Cookie", cookies);
+		
+		const transactionId = listTransactionsResponse.body.transactions[0].id;
+
+		const getEspecificTransactionResponse = await request(app.server)
+		.get(`/transactions/${transactionId}`)
+		.set("Cookie", cookies)
+		
+		expect(getEspecificTransactionResponse.status).toEqual(200)
+
+		console.log(getEspecificTransactionResponse.body)
+
+		expect(getEspecificTransactionResponse.body.transaction).toEqual(
+			expect.objectContaining({
+				title: "New transaction",
+				amount: 5000
+			})
+		)
+	});
+
+	test("It should be able to get the summary", async () => {
+		// Para nós listarmos as transações precisamos de um sessionID que só é criado após gerar uma transação
+		const createTransactionResponse = await request(app.server)
+			.post("/transactions")
+			.send({
+				title: "Credit transaction",
+				amount: 5000,
+				type: "credit",
+			});
+
+		const cookies = createTransactionResponse.get("Set-Cookie");
+
+		if (!cookies) {
+			throw new Error("Cookies where not defined")
+		}
+
+		await request(app.server)
+			.post("/transactions")
+			.set("Cookie", cookies)
+			.send({
+				title: "Debit transaction",
+				amount: 2000,
+				type: "debit",
+			});
+
+		const summaryResponse = await request(app.server)
+			.get("/transactions/summary")
+			.set("Cookie", cookies);
+
+		expect(summaryResponse.status).toEqual(200);
+
+		expect(summaryResponse.body).toEqual({
+			success: true,
+			message: "Request successfully!",
+			summary: expect.objectContaining({
+				amount: 3000
+			}),
+		});
 	});
 });
