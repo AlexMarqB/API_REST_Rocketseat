@@ -119,3 +119,40 @@ ela permite que nós façamos chamadas HTTP sem rodar a aplicação
 TODO TESTE deve ser independente de contexto e de outro teste, se um teste depende de outro eles devem ser o mesmo teste
 
 O ideal é executar os testes em um banco de dados especifico de teste que sempre seja zerado após os testes
+
+Preparando o projeto para dar deploy
+
+Arquitetura de deploy => formas de subir o projeto
+- serverless (sem contexto)
+- docker
+- escalionamento pelo infra
+
+Nesse projeto utilizaremos um serviço gerenciado == deploy automatizado/simplificado 
+ 
+O nosso código está em typescript. Nenhuma plataforma entende o typescript precisamos converter para javascript
+
+ tsconfig => 
+            rootDir: "./src"
+            outDir: "./ build
+
+npx tsc -> Converte. Porém lento então iremos usar o ts up
+
+Passo a passo com tsup também utiliza o esbuild como o vitest e o tsx:
+
+npm i tsup -D 
+
+package.json:
+script: {
+    "build": "tsup src"
+}
+
+gerou uma pasta chamada "dist" para mudar o nome da pasta de "dist" para "build": 
+script: {
+    "build": "tsup src --out-dir build"
+}
+
+testamos se conseguimos rodar o server:
+
+node build/server.cjs
+
+adicionamos a pasta build no gitignore
